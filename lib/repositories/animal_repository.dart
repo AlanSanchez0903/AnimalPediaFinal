@@ -13,18 +13,32 @@ class AnimalRepository {
   final AnimalImageApi _imageApi;
 
   Future<List<Animal>> getAnimals() async {
-    final animals = await _animalApi.fetchAnimals();
-    final imageUrlsById = await _imageApi.fetchAnimalImageUrls();
+    final animalDtos = await _animalApi.fetchAnimals();
+    final imageDtos = await _imageApi.fetchAnimalImages();
     final discoveredIds = await AnimalDiscoveryStorage.loadDiscoveredIds();
 
-    return animals
+    final imageUrlsById = <String, String>{
+      for (final image in imageDtos) image.id: image.imagenUrl,
+    };
+
+    return animalDtos
         .map(
-          (animal) => animal.copyWith(
-            imagenUrl: imageUrlsById[animal.id] ?? '',
-            descubierto: discoveredIds.contains(animal.id),
+          (dto) => AnimalModel(
+            id: dto.id,
+            nombre: dto.nombre,
+            nombreCientifico: dto.nombreCientifico,
+            descripcion: dto.descripcion,
+            habitat: dto.habitat,
+            dieta: dto.dieta,
+            latitud: dto.latitud,
+            longitud: dto.longitud,
+            imagenUrl: imageUrlsById[dto.id] ?? '',
+            descubierto: discoveredIds.contains(dto.id),
+            bioma: dto.bioma,
+            pais: dto.pais,
           ),
         )
-        .toList();
+        .toList(growable: false);
   }
 
   Future<void> markAsDiscovered(String animalId) {
