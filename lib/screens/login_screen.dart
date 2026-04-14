@@ -56,6 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
+      await SessionStorage.setCurrentAuthenticatedUser(_usernameController.text.trim());
       await SessionStorage.saveSessionStatus(true);
 
       if (!mounted) {
@@ -114,8 +115,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (username.isEmpty) {
                           return 'Ingresa tu username.';
                         }
-                        if (username.length < 4) {
-                          return 'El username debe tener mínimo 4 caracteres.';
+                        if (username.length < SessionStorage.minUsernameLength) {
+                          return 'El username debe tener mínimo ${SessionStorage.minUsernameLength} caracteres.';
                         }
                         return null;
                       },
@@ -131,8 +132,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (password.isEmpty) {
                           return 'Ingresa tu contraseña.';
                         }
-                        if (password.length < 6) {
-                          return 'La contraseña debe tener mínimo 6 caracteres.';
+                        if (password.length < SessionStorage.minPasswordLength) {
+                          return 'La contraseña debe tener mínimo ${SessionStorage.minPasswordLength} caracteres.';
                         }
                         return null;
                       },
