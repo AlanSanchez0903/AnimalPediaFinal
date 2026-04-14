@@ -97,32 +97,6 @@ class AnimalModel {
     );
   }
 
-  factory AnimalModel.fromDesApiJson(Map<String, dynamic> json) {
-    return AnimalModel(
-      id: json['id']?.toString() ?? '',
-      nombre: json['nombre']?.toString() ?? json['name']?.toString() ?? '',
-      nombreCientifico: json['nombreCientifico']?.toString() ?? json['scientificName']?.toString() ?? '',
-      descripcion: json['descripcion']?.toString() ?? json['description']?.toString() ?? '',
-      habitat: json['habitat']?.toString() ?? '',
-      dieta: json['dieta']?.toString() ?? '',
-      latitud: _toDouble(json['latitud'] ?? json['latitude']),
-      longitud: _toDouble(json['longitud'] ?? json['longitude']),
-      imagenUrl: '',
-      descubierto: false,
-      bioma: json['bioma']?.toString() ?? '',
-      pais: json['pais']?.toString() ?? json['region']?.toString() ?? '',
-    );
-  }
-
-  static double _toDouble(Object? value) {
-    if (value is num) {
-      return value.toDouble();
-    }
-    if (value is String) {
-      return double.tryParse(value) ?? 0;
-    }
-    return 0;
-  }
 }
 
 typedef Animal = AnimalModel;

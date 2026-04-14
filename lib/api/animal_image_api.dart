@@ -11,8 +11,8 @@ class AnimalImageApi {
   final String baseUrl;
   final http.Client _client;
 
-  Future<Map<String, String>> fetchAnimalImageUrls() async {
-    final uri = Uri.parse('$baseUrl/animals/images');
+  Future<List<ImgApiAnimalImageDto>> fetchAnimalImages() async {
+    final uri = Uri.parse('$baseUrl/images');
     final response = await _client.get(uri, headers: const {'Accept': 'application/json'});
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -22,29 +22,33 @@ class AnimalImageApi {
     }
 
     final decoded = jsonDecode(response.body);
-
-    if (decoded is Map<String, dynamic>) {
-      return decoded.map(
-        (key, value) => MapEntry(key, value?.toString() ?? ''),
-      );
+    if (decoded is! List) {
+      throw const AnimalImageApiException('Respuesta inválida de imgAPI2: se esperaba una lista de imágenes.');
     }
 
-    if (decoded is List) {
-      final map = <String, String>{};
-      for (final item in decoded) {
-        if (item is Map<String, dynamic>) {
-          final id = item['id']?.toString() ?? '';
-          final url = item['imagenUrl']?.toString() ?? item['url']?.toString() ?? '';
-          if (id.isNotEmpty && url.isNotEmpty) {
-            map[id] = url;
-          }
-        }
-      }
-      return map;
-    }
+    return decoded
+        .whereType<Map<String, dynamic>>()
+        .map(ImgApiAnimalImageDto.fromJson)
+        .toList(growable: false);
+  }
+}
 
-    throw const AnimalImageApiException(
-      'Respuesta inválida de imgAPI2: se esperaba un mapa id->url o una lista.',
+class ImgApiAnimalImageDto {
+  const ImgApiAnimalImageDto({
+    required this.id,
+    required this.nombre,
+    required this.imagenUrl,
+  });
+
+  final String id;
+  final String nombre;
+  final String imagenUrl;
+
+  factory ImgApiAnimalImageDto.fromJson(Map<String, dynamic> json) {
+    return ImgApiAnimalImageDto(
+      id: json['id']?.toString() ?? '',
+      nombre: json['nombre']?.toString() ?? '',
+      imagenUrl: json['imagenUrl']?.toString() ?? '',
     );
   }
 }
