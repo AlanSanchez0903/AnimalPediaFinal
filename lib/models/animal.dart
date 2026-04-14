@@ -82,19 +82,46 @@ class AnimalModel {
 
   factory AnimalModel.fromJson(Map<String, dynamic> json) {
     return AnimalModel(
-      id: json['id'] as String,
-      nombre: json['nombre'] as String,
-      nombreCientifico: json['nombreCientifico'] as String,
-      descripcion: json['descripcion'] as String,
-      habitat: json['habitat'] as String,
-      dieta: json['dieta'] as String,
-      latitud: (json['latitud'] as num).toDouble(),
-      longitud: (json['longitud'] as num).toDouble(),
-      imagenUrl: json['imagenUrl'] as String,
-      descubierto: json['descubierto'] as bool,
-      bioma: json['bioma'] as String,
-      pais: json['pais'] as String,
+      id: json['id']?.toString() ?? '',
+      nombre: json['nombre']?.toString() ?? '',
+      nombreCientifico: json['nombreCientifico']?.toString() ?? '',
+      descripcion: json['descripcion']?.toString() ?? '',
+      habitat: json['habitat']?.toString() ?? '',
+      dieta: json['dieta']?.toString() ?? '',
+      latitud: (json['latitud'] as num?)?.toDouble() ?? 0,
+      longitud: (json['longitud'] as num?)?.toDouble() ?? 0,
+      imagenUrl: json['imagenUrl']?.toString() ?? '',
+      descubierto: json['descubierto'] as bool? ?? false,
+      bioma: json['bioma']?.toString() ?? '',
+      pais: json['pais']?.toString() ?? '',
     );
+  }
+
+  factory AnimalModel.fromDesApiJson(Map<String, dynamic> json) {
+    return AnimalModel(
+      id: json['id']?.toString() ?? '',
+      nombre: json['nombre']?.toString() ?? json['name']?.toString() ?? '',
+      nombreCientifico: json['nombreCientifico']?.toString() ?? json['scientificName']?.toString() ?? '',
+      descripcion: json['descripcion']?.toString() ?? json['description']?.toString() ?? '',
+      habitat: json['habitat']?.toString() ?? '',
+      dieta: json['dieta']?.toString() ?? '',
+      latitud: _toDouble(json['latitud'] ?? json['latitude']),
+      longitud: _toDouble(json['longitud'] ?? json['longitude']),
+      imagenUrl: '',
+      descubierto: false,
+      bioma: json['bioma']?.toString() ?? '',
+      pais: json['pais']?.toString() ?? json['region']?.toString() ?? '',
+    );
+  }
+
+  static double _toDouble(Object? value) {
+    if (value is num) {
+      return value.toDouble();
+    }
+    if (value is String) {
+      return double.tryParse(value) ?? 0;
+    }
+    return 0;
   }
 }
 
