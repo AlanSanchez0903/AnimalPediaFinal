@@ -8,8 +8,8 @@ class AnimalModel {
     required this.dieta,
     required this.latitud,
     required this.longitud,
-    required this.imagenUrl,
-    required this.descubierto,
+    this.imagenUrl = '',
+    this.descubierto = false,
     required this.bioma,
     required this.pais,
   });

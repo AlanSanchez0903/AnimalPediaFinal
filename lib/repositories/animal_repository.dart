@@ -13,13 +13,29 @@ class AnimalRepository {
   final AnimalImageApi _imageApi;
 
   Future<List<Animal>> getAnimals() async {
-    final animalDtos = await _animalApi.fetchAnimals();
-    final imageDtos = await _imageApi.fetchAnimalImages();
-    final discoveredIds = await AnimalDiscoveryStorage.loadDiscoveredIds();
+    List<DesApiAnimalDto> animalDtos = <DesApiAnimalDto>[];
+    try {
+      animalDtos = await _animalApi.fetchAnimals();
+    } catch (_) {
+      return <Animal>[];
+    }
 
-    final imageUrlsById = <String, String>{
-      for (final image in imageDtos) image.id: image.imagenUrl,
-    };
+    Map<String, String> imageUrlsById = <String, String>{};
+    try {
+      final imageDtos = await _imageApi.fetchAnimalImages();
+      imageUrlsById = <String, String>{
+        for (final image in imageDtos) image.id: image.imagenUrl,
+      };
+    } catch (_) {
+      imageUrlsById = <String, String>{};
+    }
+
+    Set<String> discoveredIds = <String>{};
+    try {
+      discoveredIds = await AnimalDiscoveryStorage.loadDiscoveredIdsForCurrentUser();
+    } catch (_) {
+      discoveredIds = <String>{};
+    }
 
     return animalDtos
         .map(
