@@ -135,7 +135,7 @@ class _AnimalHeroImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = imageUrl.trim().isNotEmpty;
+    final hasRemoteImage = _isRemoteUrl(imageUrl);
 
     return Container(
       height: 250,
@@ -157,14 +157,26 @@ class _AnimalHeroImage extends StatelessWidget {
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: hasImage
+      child: hasRemoteImage
           ? Image.network(
               imageUrl,
               fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) {
+                  return child;
+                }
+
+                return const _ImageLoadingPlaceholder();
+              },
               errorBuilder: (_, __, ___) => const _ImageFallback(),
             )
           : const _ImageFallback(),
     );
+  }
+
+  static bool _isRemoteUrl(String value) {
+    final trimmed = value.trim();
+    return trimmed.startsWith('http://') || trimmed.startsWith('https://');
   }
 }
 
@@ -186,6 +198,33 @@ class _ImageFallback extends StatelessWidget {
           Icons.pets_rounded,
           color: Colors.white54,
           size: 72,
+        ),
+      ),
+    );
+  }
+}
+
+class _ImageLoadingPlaceholder extends StatelessWidget {
+  const _ImageLoadingPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF252525), Color(0xFF161616)],
+        ),
+      ),
+      child: const Center(
+        child: SizedBox(
+          width: 28,
+          height: 28,
+          child: CircularProgressIndicator(
+            strokeWidth: 2.4,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
+          ),
         ),
       ),
     );
