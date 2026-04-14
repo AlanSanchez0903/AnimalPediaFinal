@@ -46,7 +46,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final password = _passwordController.text;
 
       await SessionStorage.registerUser(username: username, password: password);
-      await SessionStorage.saveSessionStatus(true);
 
       if (!mounted) {
         return;
@@ -59,6 +58,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
 
       Navigator.of(context).pushNamedAndRemoveUntil(HomeScreen.routeName, (route) => false);
+    } on SessionStorageException catch (error) {
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(SnackBar(content: Text(error.message)));
     } finally {
       if (mounted) {
         setState(() => _isSubmitting = false);
@@ -98,8 +105,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         if (username.isEmpty) {
                           return 'El username es obligatorio.';
                         }
-                        if (username.length < 4) {
-                          return 'El username debe tener mínimo 4 caracteres.';
+                        if (username.length < SessionStorage.minUsernameLength) {
+                          return 'El username debe tener mínimo ${SessionStorage.minUsernameLength} caracteres.';
                         }
                         return null;
                       },
@@ -116,8 +123,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         if (password.isEmpty) {
                           return 'La contraseña es obligatoria.';
                         }
-                        if (password.length < 6) {
-                          return 'La contraseña debe tener mínimo 6 caracteres.';
+                        if (password.length < SessionStorage.minPasswordLength) {
+                          return 'La contraseña debe tener mínimo ${SessionStorage.minPasswordLength} caracteres.';
                         }
                         return null;
                       },
