@@ -137,40 +137,46 @@ class _AnimalHeroImage extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasRemoteImage = _isRemoteUrl(imageUrl);
 
-    return Container(
-      height: 250,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF1A1A1A), Color(0xFF111111)],
-        ),
-        border: Border.all(color: Colors.white.withOpacity(0.10)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.45),
-            blurRadius: 22,
-            offset: const Offset(0, 14),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: hasRemoteImage
-          ? Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) {
-                  return child;
-                }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final imageHeight = constraints.maxWidth < 400 ? 220.0 : 250.0;
 
-                return const _ImageLoadingPlaceholder();
-              },
-              errorBuilder: (_, __, ___) => const _ImageFallback(),
-            )
-          : const _ImageFallback(),
+        return Container(
+          height: imageHeight,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF1A1A1A), Color(0xFF111111)],
+            ),
+            border: Border.all(color: Colors.white.withOpacity(0.10)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.45),
+                blurRadius: 22,
+                offset: const Offset(0, 14),
+              ),
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: hasRemoteImage
+              ? Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    }
+
+                    return const _ImageLoadingPlaceholder();
+                  },
+                  errorBuilder: (_, __, ___) => const _ImageFallback(),
+                )
+              : const _ImageFallback(),
+        );
+      },
     );
   }
 

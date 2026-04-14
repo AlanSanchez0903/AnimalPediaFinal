@@ -83,56 +83,68 @@ class _AnimalMapScreenState extends State<AnimalMapScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                _MapProgressHeader(
-                  discoveredCount: discoveredCount,
-                  totalCount: _animals.length,
-                ),
-                Expanded(
-                  child: FlutterMap(
-                    options: const MapOptions(
-                      initialCenter: LatLng(18, 0),
-                      initialZoom: 2.0,
-                      minZoom: 1.5,
-                      maxZoom: 6.0,
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                final horizontalMargin = constraints.maxWidth < 380 ? 8.0 : 12.0;
+
+                return Column(
+                  children: [
+                    _MapProgressHeader(
+                      discoveredCount: discoveredCount,
+                      totalCount: _animals.length,
+                      horizontalMargin: horizontalMargin,
                     ),
-                    children: [
-                      TileLayer(
-                        // Tema oscuro sobrio sin API key.
-                        urlTemplate: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-                        subdomains: const ['a', 'b', 'c', 'd'],
-                        userAgentPackageName: 'com.example.animalpedia',
+                    Expanded(
+                      child: FlutterMap(
+                        options: const MapOptions(
+                          initialCenter: LatLng(18, 0),
+                          initialZoom: 2.0,
+                          minZoom: 1.5,
+                          maxZoom: 6.0,
+                        ),
+                        children: [
+                          TileLayer(
+                            // Tema oscuro sobrio sin API key.
+                            urlTemplate: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                            subdomains: const ['a', 'b', 'c', 'd'],
+                            userAgentPackageName: 'com.example.animalpedia',
+                          ),
+                          MarkerLayer(
+                            markers: _animals
+                                .map(
+                                  (animal) => Marker(
+                                    point: LatLng(animal.latitud, animal.longitud),
+                                    width: 42,
+                                    height: 42,
+                                    child: AnimalMarker(
+                                      isDiscovered: animal.descubierto,
+                                      onTap: () => _onAnimalTap(animal),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ],
                       ),
-                      MarkerLayer(
-                        markers: _animals
-                            .map(
-                              (animal) => Marker(
-                                point: LatLng(animal.latitud, animal.longitud),
-                                width: 42,
-                                height: 42,
-                                child: AnimalMarker(
-                                  isDiscovered: animal.descubierto,
-                                  onTap: () => _onAnimalTap(animal),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                    ),
+                  ],
+                );
+              },
             ),
     );
   }
 }
 
 class _MapProgressHeader extends StatelessWidget {
-  const _MapProgressHeader({required this.discoveredCount, required this.totalCount});
+  const _MapProgressHeader({
+    required this.discoveredCount,
+    required this.totalCount,
+    required this.horizontalMargin,
+  });
 
   final int discoveredCount;
   final int totalCount;
+  final double horizontalMargin;
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +152,7 @@ class _MapProgressHeader extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+      margin: EdgeInsets.fromLTRB(horizontalMargin, 12, horizontalMargin, 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.06),

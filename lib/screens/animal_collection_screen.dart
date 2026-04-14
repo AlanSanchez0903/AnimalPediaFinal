@@ -73,6 +73,8 @@ class _CollectionScreenState extends State<CollectionScreen> {
         appBar: AppBar(
           title: const Text('Colección Animalpedia'),
           bottom: const TabBar(
+            isScrollable: true,
+            tabAlignment: TabAlignment.start,
             tabs: [
               Tab(text: 'Descubiertos'),
               Tab(text: 'Por descubrir'),
