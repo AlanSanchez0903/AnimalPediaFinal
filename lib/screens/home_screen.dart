@@ -62,6 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context, constraints) {
                   final contentMaxWidth = constraints.maxWidth > 1000 ? 980.0 : 760.0;
                   final crossAxisCount = constraints.maxWidth >= 780 ? 2 : 1;
+                  final horizontalPadding = constraints.maxWidth < 360 ? 12.0 : 20.0;
+                  final cardExtent = constraints.maxWidth < 420 ? 196.0 : 180.0;
 
                   return Center(
                     child: ConstrainedBox(
@@ -71,12 +73,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         slivers: [
                           SliverToBoxAdapter(
                             child: Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                              padding: EdgeInsets.fromLTRB(horizontalPadding, 16, horizontalPadding, 8),
                               child: _HeroHeader(username: username),
                             ),
                           ),
                           SliverPadding(
-                            padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+                            padding: EdgeInsets.fromLTRB(horizontalPadding, 12, horizontalPadding, 32),
                             sliver: SliverGrid(
                               delegate: SliverChildListDelegate.fixed([
                                 _FeatureCard(
@@ -118,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 crossAxisCount: crossAxisCount,
                                 mainAxisSpacing: 16,
                                 crossAxisSpacing: 16,
-                                mainAxisExtent: 180,
+                                mainAxisExtent: cardExtent,
                               ),
                             ),
                           ),
