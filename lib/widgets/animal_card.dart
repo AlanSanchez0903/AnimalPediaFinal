@@ -71,11 +71,15 @@ class _DiscoveredContent extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.asset(
-            animal.imagePath,
+          child: Image.network(
+            animal.imagenUrl,
             height: 120,
             width: double.infinity,
             fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(
+              color: Colors.white.withOpacity(0.06),
+              child: const Icon(Icons.broken_image_rounded, color: Colors.white54),
+            ),
           ),
         ),
         const SizedBox(height: 10),

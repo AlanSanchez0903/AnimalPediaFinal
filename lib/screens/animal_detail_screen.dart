@@ -62,7 +62,7 @@ class AnimalDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _AnimalHeroImage(imagePath: animal.imagenUrl),
+                  _AnimalHeroImage(imageUrl: animal.imagenUrl),
                   const SizedBox(height: 18),
                   Text(
                     displayName,
@@ -129,13 +129,13 @@ class AnimalDetailScreen extends StatelessWidget {
 }
 
 class _AnimalHeroImage extends StatelessWidget {
-  const _AnimalHeroImage({required this.imagePath});
+  const _AnimalHeroImage({required this.imageUrl});
 
-  final String imagePath;
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = imagePath.trim().isNotEmpty;
+    final hasImage = imageUrl.trim().isNotEmpty;
 
     return Container(
       height: 250,
@@ -158,8 +158,8 @@ class _AnimalHeroImage extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: hasImage
-          ? Image.asset(
-              imagePath,
+          ? Image.network(
+              imageUrl,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => const _ImageFallback(),
             )
