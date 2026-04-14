@@ -71,15 +71,10 @@ class _DiscoveredContent extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.network(
-            animal.imagenUrl,
+          child: _AnimalNetworkImage(
+            imageUrl: animal.imagenUrl,
             height: 120,
             width: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
-              color: Colors.white.withOpacity(0.06),
-              child: const Icon(Icons.broken_image_rounded, color: Colors.white54),
-            ),
           ),
         ),
         const SizedBox(height: 10),
@@ -97,6 +92,106 @@ class _DiscoveredContent extends StatelessWidget {
           style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white70),
         ),
       ],
+    );
+  }
+}
+
+class _AnimalNetworkImage extends StatelessWidget {
+  const _AnimalNetworkImage({
+    required this.imageUrl,
+    required this.height,
+    required this.width,
+  });
+
+  final String imageUrl;
+  final double height;
+  final double width;
+
+  bool get _isRemoteUrl {
+    final url = imageUrl.trim();
+    return url.startsWith('http://') || url.startsWith('https://');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_isRemoteUrl) {
+      return _ImageFallback(height: height, width: width);
+    }
+
+    return Image.network(
+      imageUrl,
+      height: height,
+      width: width,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) {
+          return child;
+        }
+
+        return _ImageLoadingPlaceholder(
+          height: height,
+          width: width,
+        );
+      },
+      errorBuilder: (_, __, ___) => _ImageFallback(height: height, width: width),
+    );
+  }
+}
+
+class _ImageLoadingPlaceholder extends StatelessWidget {
+  const _ImageLoadingPlaceholder({
+    required this.height,
+    required this.width,
+  });
+
+  final double height;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      width: width,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withOpacity(0.06),
+            Colors.white.withOpacity(0.03),
+          ],
+        ),
+      ),
+      child: const Center(
+        child: SizedBox(
+          width: 22,
+          height: 22,
+          child: CircularProgressIndicator(
+            strokeWidth: 2.2,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ImageFallback extends StatelessWidget {
+  const _ImageFallback({
+    required this.height,
+    required this.width,
+  });
+
+  final double height;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      width: width,
+      color: Colors.white.withOpacity(0.06),
+      child: const Icon(Icons.broken_image_rounded, color: Colors.white54),
     );
   }
 }
