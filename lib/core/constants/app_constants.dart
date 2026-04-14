@@ -2,7 +2,6 @@ class AppConstants {
   AppConstants._();
 
   static const String appName = 'Animalpedia';
-  static const String animalsSectionTitle = 'Mamíferos destacados';
 
   /// URL base de desAPI1. Cambiar con:
   /// flutter run --dart-define=DES_API_BASE_URL=http://<TU_IP>:8000
